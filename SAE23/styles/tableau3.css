@@ -1,0 +1,66 @@
+/* Fichier styles.css */
+
+/* Style général de la section tableaux */
+.tableaux {
+  margin: 20px;
+}
+
+/* Style du titre h2 */
+.tableaux h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Style du tableau */
+.tableaux table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color:  #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+}
+
+/* Style de l'en-tête du tableau */
+.tableaux th {
+  background-color: #f2f2f2;
+  color: #333333;
+  font-weight: bold;
+  padding: 12px;
+  text-align: left;
+  background-color:  #0bba6e;
+  
+}
+
+/* Style des cellules du tableau */
+.tableaux td {
+  padding: 12px;
+  color : #000000;
+}
+
+/* Style des lignes impaires du tableau */
+.tableaux tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+/* Style pour rendre le tableau plus grand */
+@media only screen and (min-width: 768px) {
+  .tableaux table {
+    font-size: 18px;
+  }
+}
+.tableaux {
+  display:inline-table;
+  vertical-align: top;
+  
+
+}
+
+
+
+
+@media screen and (max-width: 900px){
+.tableaux{
+margin: 8px;
+
+}

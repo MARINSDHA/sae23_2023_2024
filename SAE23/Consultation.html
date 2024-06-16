@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">		<!-- Setting the language to french-->
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css" /> <!-- Line bindering HTML page with the CSS file-->
+		<link rel="stylesheet" type="text/css" href="./styles/tableau3.css" />	
+		<link rel="icon" type="image/png" href="./images/icon.png" />	<!-- Thumbnail on the tab of the website-->
+		<title>SAÉ23 - Administration</title> 	<!-- Main title of the page-->
+  	<meta charset="utf-8"> 	<!--Encoding format for characters-->
+  	<meta name="viewport" content="width=device-width, initial-scale=1" /> 	<!-- This line is necessary to handle well RWD display-->
+  	<meta name="author" content="SCM" />			<!--Referencing stuff : The autors-->
+  	<meta name="description" content="SAÉ23" /> 		<!--Referencing stuff : Description of the content-->
+  	<meta name="keywords" content="HTML, CSS" />		<!--Referencing stuff : Keywords-->
+	</head>
+	<!--Beginning of the Web page-->
+	<body>
+  	<header>
+  		<img class= image-responsive logo src=images/Logo_RT.png alt=Logo RT  />
+  		<!-- Browsing menu thaks to which we can surf between the pages of the website-->
+  		<nav>
+        <ul>
+          <li><a href=" index.html">Accueil</a></li>
+          <li><a href=" Administration.php" class="selected">Administration</a></li>
+			  	<li><a href=" Gestion.php">Gestion</a></li>
+			  	<li><a href=" Consultation.php">Consultation</a></li>
+			  	<li><a href=" Contact.html">Contact</a></li>
+			  	<li><a href=" Gestion_de_projet.html">Gestion de projet</a></li>
+          <li><a href=" Mentions_legales.html"><i>Mentions légales</i></a></li>
+        </ul>
+      </nav>
+      
+    </header> 
+  <section class="text">
+			<h1>Consultation des données </h1>
+    	
+		</section>
+		
+	<section class="tableaux">
+
+			<!-- Creation of a table displaying the name of the building and all its sensors + their latest values -->
+<?php
+// Include database connection parameters
+include("db.php");
+
+// Query to retrieve the latest measurements for each sensor with building and room names
+$sql = "SELECT mesure.`ID-cap`, mesure.`Salle`, mesure.`type`, mesure.`date`, mesure.`heure`, mesure.`valeur`, capteur.`ID-bat`
+        FROM mesure
+        INNER JOIN (
+            SELECT `ID-cap`, `Salle`, `type`, MAX(`date`) AS max_date, MAX(`heure`) AS max_horaire
+            FROM mesure
+            GROUP BY `ID-cap`, `Salle`, `type`
+        ) latest_measure ON mesure.`ID-cap` = latest_measure.`ID-cap` AND mesure.`Salle` = latest_measure.`Salle` AND mesure.`type` = latest_measure.`type` AND mesure.`date` = latest_measure.max_date AND mesure.`heure` = latest_measure.max_horaire
+        INNER JOIN capteur ON mesure.`ID-cap` = capteur.`ID-cap`";
+
+// Execute the query
+$result = $conn->query($sql);
+
+// Check if there are any results
+if ($result->num_rows > 0) {
+    // Associative array to store data by sensor
+    $capteurs = array();
+
+    // Loop through the results
+    while ($row = $result->fetch_assoc()) {
+        $capteur = $row['ID-cap'];
+
+        // Check if the sensor already exists in the array
+        if (isset($capteurs[$capteur])) {
+            // If the sensor exists, add the data to its value array
+            $capteurs[$capteur]['types'][] = $row['type'];
+            $capteurs[$capteur]['dates'][] = $row['date'];
+            $capteurs[$capteur]['horaires'][] = $row['heure'];
+            $capteurs[$capteur]['valeurs'][] = $row['valeur'];
+        } else {
+            // If the sensor doesn't exist, create an entry for the sensor in the array
+            $capteurs[$capteur] = array(
+                'types' => array($row['type']),
+                'dates' => array($row['date']),
+                'horaires' => array($row['heure']),
+                'valeurs' => array($row['valeur']),
+                'batiment' => $row['ID-bat'],
+                'salle' => $row['Salle']
+            );
+        }
+    }
+
+    // Display the data for each sensor in a table
+    echo "<div class='tableaux'>";
+    foreach ($capteurs as $capteur => $data) {
+        echo "<table>";
+        echo "<caption><i><u>Capteur :</u> $capteur</i> - Bâtiment: " . $data['batiment'] . " - Salle: " . $data['salle'] . "</caption>";
+        echo "<tr><th>Type</th><th>Date</th><th>Heure</th><th>Valeur</th></tr>";
+
+        // Loop through the sensor's data
+        $count = count($data['types']);
+        for ($i = 0; $i < $count; $i++) {
+            $type = $data['types'][$i];
+            $date_mesure = $data['dates'][$i];
+            $horaire_mesure = $data['horaires'][$i];
+            $valeur_mesure = $data['valeurs'][$i];
+			
+			// Including the unit file
+            include("unite.php");
+
+            echo "<tr><td>$type</td><td>$date_mesure</td><td>$horaire_mesure</td><td>$valeur_mesure $unit</td></tr>";
+        }
+        echo "</table>";
+    }
+    echo "</div>";
+} else {
+    echo "Aucun résultat trouvé.";
+}
+
+// Close the database connection
+$conn->close();
+?>
+
+
+
+
+</section>
+
+<section class="bas_de_page">
+    	<hr />
+    	<p><em> Validation de la page HTML5 - CSS3 </em></p>
+		<img class="Validation" src="./images/Validation_HTML.png" alt="HTML5 Valide !" /> 
+			<img class="Validation" src="./images/vcss-blue.gif" alt="CSS Valide !"/>
+			
+			</section>
+    
+  	<footer>
+    		<ul>
+      		<li> THIAM / FELLAH / LEVEIL </li>
+      		<li><b>SAÉ 23</b></li>
+      		<li><a href="https://www.iut-blagnac.fr/fr/" >IUT de Blagnac </a>	<!-- Link to the website of our dear school-->
+    		</ul>  
+  		</footer>
+    
+ 	</body>
+	</html>

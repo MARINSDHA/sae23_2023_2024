@@ -1,0 +1,42 @@
+table
+{
+	border-collapse: collapse;
+	
+	float: center;
+	table-layout: fixed;
+    width: 80%;
+	overflow-x: auto;
+}
+td,th,caption
+{
+	border: 5px solid white;
+}
+.r
+{
+	text-align: right;
+	width: 100px;
+	padding-right: 10px;
+}
+caption
+{
+	background-color: #0bba6e;
+	color: white;
+	height: 40px;
+	padding-top: 15px;
+}
+th
+{
+    background-color: grey;	
+	color: white;
+	height: 35px;
+}
+td
+{
+    height: 25px;	
+	padding-left: 120px;
+}
+.tableaux {
+  display:inline-table;
+  vertical-align: top;
+
+}
